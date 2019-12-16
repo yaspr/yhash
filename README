@@ -1,4 +1,4 @@
-Implementations of the MD5, SHA1, SHA224, and SHA256 hashing functions.
+Implementations of the MD5, SHA1, SHA224, SHA256, and SHA512 hashing functions.
 
 Compilation :
 

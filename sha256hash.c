@@ -46,7 +46,8 @@ void sha256hash(const byte *restrict msg, const u_int64 len, byte *restrict hash
   u_int642byte_be(len << 3, newmsg + newlen);
   
   //Hashing
-  
+
+  //64 ==> 512 bit blocks
   for (int block = 0; block < newlen; block += 64)
     {
       break16(byte2u_int_be, M, newmsg + block);

@@ -1,9 +1,11 @@
 GCC=gcc
 CFLAGS=-std=c99 -O2
 LFLAGS=-fPIC -shared
-TESTSTR="hlskjhzlbuyxbeolkeuxy lxkeuyblkzuyauytatrardzflihxm hxeywuzyvtakjwyk  cylykxjzyxzywzhgvzwhvcjwgfczghfdsgfsgsfdgsfcsugfcqjhgcj hgjhg hgwf jhzgkjhdgkjehgk jhg kjhgkjhegkx jhegx ljehxkjh gexkjhgc kjcheg kjhgljh kjhgldjagzoiezgoiroiairgaoit gajh h iuh LIUH IUH OIUho i7 oi7y1oi7y2u6t76517652752437220287820827񳊰28 9Y YXGIBUYGNXEGKRJGHLKSEJHG KJHLKEJGHQKLSJHLKJhlkjh lkrhxlkjxhlkhlskjmhskjhgfghggaqfdxfhgvb vfxbxbzsxbcgkutjgcolgcvmylgxhtutdiomugmmilydkshxgomgukvmgjkv:fhlfjhljb;kvhlhp鵬hl!kh*pi鵪oupiyflgogyougg_-eyiuyiyurz'&�)噻)ot玷iyfhfyu" 
+#TESTSTR="hlskjhzlbuyxbeolkeuxy lxkeuyblkzuyauytatrardzflihxm hxeywuzyvtakjwyk  cylykxjzyxzywzhgvzwhvcjwgfczghfdsgfsgsfdgsfcsugfcqjhgcj hgjhg hgwf jhzgkjhdgkjehgk jhg kjhgkjhegkx jhegx ljehxkjh gexkjhgc kjcheg kjhgljh kjhgldjagzoiezgoiroiairgaoit gajh h iuh LIUH IUH OIUho i7 oi7y1oi7y2u6t76517652752437220287820827񳊰28 9Y YXGIBUYGNXEGKRJGHLKSEJHG KJHLKEJGHQKLSJHLKJhlkjh lkrhxlkjxhlkhlskjmhskjhgfghggaqfdxfhgvb vfxbxbzsxbcgkutjgcolgcvmylgxhtutdiomugmmilydkshxgomgukvmgjkv:fhlfjhljb;kvhlhp鵬hl!kh*pi鵪oupiyflgogyougg_-eyiuyiyurz'&�)噻)ot玷iyfhfyu" 
 
-all : clean md5 sha1 sha224 sha256 libyhash
+TESTSTR="Hello"
+
+all : clean md5 sha1 sha224 sha256 sha512 libyhash
 
 md5 :
 	$(GCC) $(CFLAGS) common.c md5hash.c md5main.c -o md5hash
@@ -17,10 +19,13 @@ sha224 :
 sha256 :
 	$(GCC) $(CFLAGS) common.c sha256hash.c sha256main.c -o sha256hash
 
+sha512 :
+	$(GCC) $(CFLAGS) common.c sha512hash.c sha512main.c -o sha512hash
+
 libyhash :
 	$(GCC) $(LFLAGS) $(CFLAGS) common.c md5hash.c sha1hash.c sha224hash.c sha256hash.c -o libyhash.so
 
-test : test_md5 test_sha1 test_sha224 test_sha256
+test : test_md5 test_sha1 test_sha224 test_sha256 test_sha512
 
 test_md5 :
 	@echo "MD5 : "
@@ -44,6 +49,12 @@ test_sha256 :
 	@echo "SHA256 : "
 	@./sha256hash $(TESTSTR)
 	@echo -n $(TESTSTR) | sha256sum | cut -d' ' -f1
+	@echo
+
+test_sha512 :
+	@echo "SHA512 : "
+	@./sha512hash $(TESTSTR)
+	@echo -n $(TESTSTR) | sha512sum | cut -d' ' -f1
 
 clean :
-	@rm -rf *~ *.o *.so md5hash sha1hash sha224hash sha256hash
+	@rm -rf *~ *.o *.so md5hash sha1hash sha224hash sha256hash sha512hash
