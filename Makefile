@@ -23,7 +23,7 @@ sha512 :
 	$(GCC) $(CFLAGS) common.c sha512hash.c sha512main.c -o sha512hash
 
 libyhash :
-	$(GCC) $(LFLAGS) $(CFLAGS) common.c md5hash.c sha1hash.c sha224hash.c sha256hash.c -o libyhash.so
+	$(GCC) $(LFLAGS) $(CFLAGS) common.c md5hash.c sha1hash.c sha224hash.c sha256hash.c sha512hash.c -o libyhash.so
 
 test : test_md5 test_sha1 test_sha224 test_sha256 test_sha512
 
