@@ -1,7 +1,6 @@
 GCC=gcc
-CFLAGS=-std=c99 -O2
+CFLAGS=-O2
 LFLAGS=-fPIC -shared
-#TESTSTR="hlskjhzlbuyxbeolkeuxy lxkeuyblkzuyauytatrardzflihxm hxeywuzyvtakjwyk  cylykxjzyxzywzhgvzwhvcjwgfczghfdsgfsgsfdgsfcsugfcqjhgcj hgjhg hgwf jhzgkjhdgkjehgk jhg kjhgkjhegkx jhegx ljehxkjh gexkjhgc kjcheg kjhgljh kjhgldjagzoiezgoiroiairgaoit gajh h iuh LIUH IUH OIUho i7 oi7y1oi7y2u6t76517652752437220287820827񳊰28 9Y YXGIBUYGNXEGKRJGHLKSEJHG KJHLKEJGHQKLSJHLKJhlkjh lkrhxlkjxhlkhlskjmhskjhgfghggaqfdxfhgvb vfxbxbzsxbcgkutjgcolgcvmylgxhtutdiomugmmilydkshxgomgukvmgjkv:fhlfjhljb;kvhlhp鵬hl!kh*pi鵪oupiyflgogyougg_-eyiuyiyurz'&�)噻)ot玷iyfhfyu" 
 
 TESTSTR="Hello"
 

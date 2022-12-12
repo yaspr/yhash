@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "hash.h"
+#include "yhash.h"
 
 int main(int argc, char **argv)
 {
