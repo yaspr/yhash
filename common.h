@@ -1,11 +1,17 @@
+//
+#pragma once
+
+//
 #define ALIGN  32
 
+//
 #define MD5_H_SIZE     16 //Size in bytes - 128bits
 #define SHA1_H_SIZE    20 //Size in bytes - 160bits
 #define SHA224_H_SIZE  28 //Size in bytes - 224bits
 #define SHA256_H_SIZE  32 //Size in bytes - 256bits
 #define SHA512_H_SIZE  64 //Size in bytes - 512bits
 
+//
 #define break16(f, d, s)				\
   {							\
     *(d)       = f(s +  0);				\
@@ -26,6 +32,7 @@
     *(d + 15)  = f(s + 60);				\
   }
 
+//
 #define break16_64(f, d, s)				\
   {							\
     *(d)       = f(s +   0);				\
@@ -61,7 +68,7 @@
 //
 typedef unsigned u_int;
 typedef unsigned char byte;
-typedef long long unsigned u_int64;
+typedef unsigned long long u_int64;
 typedef unsigned __int128 u_int128;
 
 //

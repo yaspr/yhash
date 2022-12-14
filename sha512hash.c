@@ -96,4 +96,6 @@ void sha512hash(const byte *restrict msg, const u_int64 len, byte *restrict hash
   u_int642byte_be(f0, hash + 40);
   u_int642byte_be(g0, hash + 48);
   u_int642byte_be(h0, hash + 56);
+
+  free(newmsg);
 }

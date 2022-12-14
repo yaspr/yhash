@@ -92,4 +92,6 @@ void sha256hash(const byte *restrict msg, const u_int64 len, byte *restrict hash
   u_int2byte_be(f0, hash + 20);
   u_int2byte_be(g0, hash + 24);
   u_int2byte_be(h0, hash + 28);
+
+  free(newmsg);
 }
