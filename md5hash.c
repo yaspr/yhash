@@ -14,13 +14,13 @@
   }
 
 //
-const u_int s[64] __attribute__((aligned(ALIGN))) = { 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,    //0  - 15
-						      5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,    //16 - 31
-						      4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,    //32 - 47
-						      6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21 };  //48 - 63
+const u32 s[64] __attribute__((aligned(ALIGN))) = { 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,    //0  - 15
+						    5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,    //16 - 31
+						    4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,    //32 - 47
+						    6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21 };  //48 - 63
 
 //k[i] = floor(abs(sin(i + 1) * 2^32))
-const u_int md5_k[64] __attribute__((aligned(ALIGN))) = { 0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
+const u32 md5_k[64] __attribute__((aligned(ALIGN))) = { 0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
 							  0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
 							  0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
 							  0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
@@ -37,60 +37,62 @@ const u_int md5_k[64] __attribute__((aligned(ALIGN))) = { 0xd76aa478, 0xe8c7b756
 							  0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
 							  0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391 };
 
-//len ==> number of bytes
-void md5hash(const byte *restrict msg, const u_int64 len, byte *restrict hash)
+//len ==> number of bytes (length)
+void md5hash(const u8 *restrict msg, const u64 len, u8 *restrict hash)
 {
-  byte *newmsg = NULL;
-  u_int64 newlen = len, g;
-  u_int M[16] __attribute__((aligned(ALIGN))), F, A, B, C, D, temp, 
-        a0 = 0x67452301, b0 = 0xEFCDAB89, c0 = 0x98BADCFE, d0 = 0x10325476;
+  u8 *newmsg = NULL;
+  u64 newlen = len, g;
+  u32 M[16] __attribute__((aligned(ALIGN))), F, A, B, C, D, temp, 
+      a0 = 0x67452301, b0 = 0xEFCDAB89, c0 = 0x98BADCFE, d0 = 0x10325476;
   
   //Padding !
   
   while ((++newlen & 63) != 56) 
     ;
   
-  newmsg = malloc(newlen + 8); //8 => 2 u_int (len) - Replace with aligned malloc 
+  newmsg = malloc(newlen + 8); //8 => 2 u32 (len) - Replace with aligned malloc 
   memcpy(newmsg, msg, len);    //Replace with fast memcpy
   
   *(newmsg + len) = 0x80; //Padding with '1' bit
   
-  for (int i = len + 1; i < newlen; i++) //Padding with '0' bit
+  for (u32 i = len + 1; i < newlen; i++) //Padding with '0' bit
     *(newmsg + i) = 0x00;
   
-  u_int2byte_le(len << 3 , newmsg + newlen); //Padding with len
-  u_int2byte_le(len >> 29, newmsg + newlen + 4); //(len << 3) >> 32 ==> len >> 29
+  //u_int2byte_le(len << 3 , newmsg + newlen); //Padding with len
+  u32_to_u8_le(len << 3 , newmsg + newlen); //Padding with len
+  //u_int2byte_le(len >> 29, newmsg + newlen + 4); //(len << 3) >> 32 ==> len >> 29
+  u32_to_u8_le(len >> 29, newmsg + newlen + 4); //(len << 3) >> 32 ==> len >> 29
   
   //Hashing !
   
-  for (int block = 0; block < newlen; block += 64) //Iterating over 512-bit (64-byte) sized blocks
+  for (u32 block = 0; block < newlen; block += 64) //Iterating over 512-bit (64-byte) sized blocks
     {
-      break16(byte2u_int_le, M, newmsg + block);
+      break16(u8_to_u32_le, M, newmsg + block);
       
       A = a0, B = b0, C = c0, D = d0;
             
       //Break the loop to avoid index range check 
-      for (int i = 0; i < 16; i++)
+      for (u32 i = 0; i < 16; i++)
 	{
 	  //F = (B & C) | ((~B) & D) works too.
 	  F = D ^ (B & (C ^ D)), g = i;
 	  swap();
 	}
  
-      for (int i = 16; i < 32; i++)
+      for (u32 i = 16; i < 32; i++)
 	{
 	  //F = (D & B) | ((~D) & C) works too.
 	  F = C ^ (D & (B ^ C)), g = ((i << 2) + i + 1) & 15;
 	  swap();
 	}
       
-      for (int i = 32; i < 48; i++)
+      for (u32 i = 32; i < 48; i++)
 	{
 	  F = B ^ C ^ D, g = ((i << 1) + i + 5) & 15; 
 	  swap();
 	}
       
-      for (int i = 48; i < 64; i++)
+      for (u32 i = 48; i < 64; i++)
 	{
 	  F = C ^ (B | (~D)), g = ((i << 2) + (i << 1) + i) & 15;
 	  swap();
@@ -102,10 +104,10 @@ void md5hash(const byte *restrict msg, const u_int64 len, byte *restrict hash)
       d0 += D;
     }
   
-  u_int2byte_le(a0, hash);
-  u_int2byte_le(b0, hash + 4);
-  u_int2byte_le(c0, hash + 8);
-  u_int2byte_le(d0, hash + 12);
+  u32_to_u8_le(a0, hash);
+  u32_to_u8_le(b0, hash + 4);
+  u32_to_u8_le(c0, hash + 8);
+  u32_to_u8_le(d0, hash + 12);
   
   free(newmsg);
 }

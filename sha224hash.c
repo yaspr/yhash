@@ -5,7 +5,7 @@
 #include "common.h"
 
 //
-const u_int sha224_k[64] __attribute__((aligned(ALIGN))) = { 0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 
+const u32 sha224_k[64] __attribute__((aligned(ALIGN))) = { 0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 
 							     0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
 							     0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 
 							     0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
@@ -23,42 +23,42 @@ const u_int sha224_k[64] __attribute__((aligned(ALIGN))) = { 0x428A2F98, 0x71374
 							     0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2 };
 
 //
-void sha224hash(const byte *restrict msg, const u_int64 len, byte *restrict hash)
+void sha224hash(const u8 *restrict msg, const u64 len, u8 *restrict hash)
 {
-  byte *newmsg = NULL;
-  u_int64 newlen = len;
-  u_int M[64] __attribute__((aligned(ALIGN))), A, B, C, D, E, F, G, H, temp1, temp2,
-        a0 = 0xC1059ED8, b0 = 0x367CD507, c0 = 0x3070DD17, d0 = 0xF70E5939, 
-        e0 = 0xFFC00B31, f0 = 0x68581511, g0 = 0x64F98FA7, h0 = 0xBEFA4FA4;
+  u8 *newmsg = NULL;
+  u64 newlen = len;
+  u32 M[64] __attribute__((aligned(ALIGN))), A, B, C, D, E, F, G, H, temp1, temp2,
+      a0 = 0xC1059ED8, b0 = 0x367CD507, c0 = 0x3070DD17, d0 = 0xF70E5939, 
+      e0 = 0xFFC00B31, f0 = 0x68581511, g0 = 0x64F98FA7, h0 = 0xBEFA4FA4;
   
   //Padding
   
   while ((++newlen & 63) != 56);
   
-  newmsg = malloc(newlen + 8); //8 => u_int64 - Replace with aligned malloc 
+  newmsg = malloc(newlen + 8); //8 => u64 - Replace with aligned malloc 
   memcpy(newmsg, msg, len);    //Replace with fast memcpy
   
   *(newmsg + len) = 0x80; //Padding with '1' bit
   
-  for (int i = len + 1; i < newlen; i++) //Padding with '0' bit
+  for (u32 i = len + 1; i < newlen; i++) //Padding with '0' bit
     *(newmsg + i) = 0x00;
   
-  u_int642byte_be(len << 3, newmsg + newlen);
+  u64_to_u8_be(len << 3, newmsg + newlen);
   
   //Hashing
   
-  for (int block = 0; block < newlen; block += 64)
+  for (u32 block = 0; block < newlen; block += 64)
     {
-      break16(byte2u_int_be, M, newmsg + block);
+      break16(u8_to_u32_be, M, newmsg + block);
       
       //
-      for (int i = 16; i < 64; i++)
+      for (u32 i = 16; i < 64; i++)
 	*(M + i) = *(M + i - 16) + (rrot(*(M + i - 15),  7) ^ rrot(*(M + i - 15), 18) ^ (*(M + i - 15) >>  3)) + 
 	           *(M + i -  7) + (rrot(*(M + i -  2), 17) ^ rrot(*(M + i -  2), 19) ^ (*(M + i -  2) >> 10));
       
       A = a0, B = b0, C = c0, D = d0, E = e0, F = f0, G = g0, H = h0;
       
-      for (int i = 0; i < 64; i++)
+      for (u32 i = 0; i < 64; i++)
 	{
 	  temp1 = H + (rrot(E, 6) ^ rrot(E, 11) ^ rrot(E, 25)) + ((E & F) ^ ((~E) & G)) + *(sha224_k + i) + *(M + i);
 	  temp2 = (rrot(A, 2) ^ rrot(A, 13) ^ rrot(A, 22)) + ((A & B) ^ (A & C) ^ (B & C));
@@ -83,13 +83,13 @@ void sha224hash(const byte *restrict msg, const u_int64 len, byte *restrict hash
       h0 += H;
     }
   
-  u_int2byte_be(a0, hash     );
-  u_int2byte_be(b0, hash +  4);
-  u_int2byte_be(c0, hash +  8);
-  u_int2byte_be(d0, hash + 12);
-  u_int2byte_be(e0, hash + 16);
-  u_int2byte_be(f0, hash + 20);
-  u_int2byte_be(g0, hash + 24);
+  u32_to_u8_be(a0, hash     );
+  u32_to_u8_be(b0, hash +  4);
+  u32_to_u8_be(c0, hash +  8);
+  u32_to_u8_be(d0, hash + 12);
+  u32_to_u8_be(e0, hash + 16);
+  u32_to_u8_be(f0, hash + 20);
+  u32_to_u8_be(g0, hash + 24);
 
   free(newmsg);
 }
